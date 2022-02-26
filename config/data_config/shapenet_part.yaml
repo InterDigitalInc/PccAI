@@ -1,0 +1,39 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configuration for the ShapeNet-Part dataset
+
+# Common options of the dataset
+dataset: shapenet_part
+num_points: 2048
+classification: False
+normalize: True
+lazy_loading: False
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 32
+    shuffle: True
+    num_workers: 8
+    augmentation: True
+    split: train
+    # class_choice: Bag
+val_cfg:
+    batch_size: 8
+    shuffle: False
+    num_workers: 1
+    augmentation: False
+    split: val
+    # class_choice: Bag
+test_cfg:
+    # class_choice: Airplane
+    # Ensure reproducibility with batch_size 1 and full (unsampled) point clouds
+    batch_size: 1
+    num_points: null
+    shuffle: False
+    num_workers: 1
+    augmentation: False
+    split: test

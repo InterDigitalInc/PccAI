@@ -1,0 +1,65 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the KITTI dataset as the octree representation
+
+# Common options of the dataset
+dataset: kitti_octree
+rw_octree: False
+rw_partition_scheme: default
+translate: [0, 0, 0]
+scale: 1
+
+# Options about octree partitioning
+octree_cfg:
+    bbox_min: [-96, -96, -96]
+    bbox_max: [96, 96, 96]
+    point_min: 64 # marked as skip if points in a block less than this number
+    point_max: 2048 # keep splitting if points in a block larger than this number
+    level_min: 3
+    level_max: 10
+
+# Options on the splitting scheme
+splitting:
+    train:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    val:
+        - 6
+        - 7
+    test:
+        - 8
+        - 9
+        - 10
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 4
+    shuffle: True
+    num_workers: 16
+    augmentation: True
+    max_num_points: 150000
+    shuffle_blocks: True
+    split: train
+val_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 2
+    augmentation: False
+    max_num_points: 150000
+    split: val
+test_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 2
+    augmentation: False
+    max_num_points: 150000
+    split: test
+

@@ -1,0 +1,23 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Network configuration
+
+---
+architecture: mlp_compression
+modules:
+    entropy_bottleneck: 64
+    cw_gen: 
+        model: pointnet
+        mlp_dims: [3, 64, 64, 64, 128, 1024]
+        fc_dims: [1024, 512, 64]
+        mlp_dolastrelu: False
+    pc_gen:
+        model: mlpdecoder
+        dims: [64, 128, 256, 512, 1024]
+        num_points: 1024
+        # overall actual mlp dim is [64, 128, 256, 512, 1024, 3072]
+    # In your custom architecture, you can introduce more modules here

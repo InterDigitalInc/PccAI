@@ -1,0 +1,55 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the KITTI dataset as 2D images by spherical projection
+
+dataset: kitti_spherical
+
+# Options on spherical coordinate conversion
+spherical_cfg:
+    height: 128
+    width: 2048
+    v_fov: [-26.5, 3.0]
+    h_fov: [-180, 180]
+    origin_shift: [0.0, -0.1, -0.17]
+    # origin_shift: [0.0, 0.0, 0.0]
+
+# Options on the splitting scheme
+splitting:
+    train:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    val:
+        - 6
+        - 7
+    test:
+        - 8
+        - 9
+        - 10
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 8
+    shuffle: True
+    num_workers: 4
+    augmentation: True
+    split: train
+val_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 2
+    augmentation: False
+    split: val
+test_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 2
+    augmentation: False
+    split: test

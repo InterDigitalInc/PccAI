@@ -1,0 +1,43 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the Ford dataset to load raw 3D points
+
+# Common options of the dataset
+dataset: ford_simple
+num_points: 80000
+seed: 0
+return_intensity: False
+
+# Options on the splitting scheme
+splitting:
+    train:
+        - 1
+        - 2
+    val:
+        - 3
+    test:
+        - 3
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 4
+    shuffle: True
+    num_workers: 4
+    augmentation: True
+    split: train
+val_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 4
+    augmentation: True
+    split: val
+test_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 4
+    augmentation: False
+    split: test

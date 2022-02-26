@@ -1,0 +1,19 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Network configuration, a template just for reference
+
+---
+architecture: sparsecnn_compression
+modules:
+    entropy_bottleneck: 8
+    # encoder: 
+    #     model: scnn_down
+    #     dims: []
+    # decoder:
+    #     model: scnn_up
+    #     dims: []
+    # etc.

@@ -1,0 +1,37 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the ModelNet dataset for loading as sparse voxels
+
+# Common options of the dataset
+dataset: modelnet_simple
+num_points: 25000
+coord_min: 0
+coord_max: 255
+voxelize: True
+sparse_collate: True
+centralize: True
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 8
+    shuffle: True
+    num_workers: 4
+    augmentation: True
+    split: train
+val_cfg:
+    batch_size: 8
+    shuffle: False
+    num_workers: 1
+    augmentation: False
+    split: val
+test_cfg:
+    batch_size: 1
+    num_points: null
+    shuffle: False
+    num_workers: 1
+    augmentation: False
+    split: test

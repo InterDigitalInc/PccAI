@@ -1,0 +1,35 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the ModelNet dataset to load raw 3D points
+
+# Common options of the dataset
+dataset: modelnet_simple
+num_points: 2048
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 32
+    shuffle: True
+    num_workers: 1
+    augmentation: True
+    split: train
+    # class_choice: Bag
+val_cfg:
+    batch_size: 8
+    shuffle: False
+    num_workers: 1
+    augmentation: False
+    split: val
+    # class_choice: Bag
+test_cfg:
+    # class_choice: Airplane
+    batch_size: 1
+    num_points: null
+    shuffle: False
+    num_workers: 1
+    augmentation: False
+    split: test

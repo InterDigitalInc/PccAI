@@ -1,0 +1,44 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the Ford dataset for loading as sparse voxels
+
+# Common options of the dataset
+dataset: ford_simple
+num_points: 150000 # for point clouds in folder 0 - 10, at least have 82602 points, at most have 129392 points
+translate: [131072, 131072, 131072]
+scale: 1
+voxelize: True
+sparse_collate: True
+return_intensity: False
+
+# Options on the splitting scheme
+splitting:
+    train:
+        - 1
+    test:
+        - 2
+        - 3
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 2
+    shuffle: True
+    num_workers: 4
+    augmentation: True
+    split: train
+val_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 4
+    augmentation: True
+    split: val
+test_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 4
+    augmentation: False
+    split: test

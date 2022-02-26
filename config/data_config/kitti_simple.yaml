@@ -1,0 +1,49 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the KITTI dataset to load raw 3D points
+
+# Common options of the dataset
+dataset: kitti_simple
+num_points: 80000 # for point clouds in folder 0 - 10, at least have 82602 points, at most have 129392 points
+seed: 0
+
+# Options on the splitting scheme
+splitting:
+    train:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    val:
+        - 6
+        - 7
+    test:
+        - 8
+        - 9
+        - 10
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 8
+    shuffle: True
+    num_workers: 4
+    augmentation: True
+    split: train
+val_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 2
+    augmentation: False
+    split: val
+test_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 2
+    augmentation: False
+    split: test

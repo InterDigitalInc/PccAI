@@ -1,0 +1,44 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the ModelNet dataset as the octree representation
+
+# Common options of the dataset
+dataset: modelnet_octree
+rw_octree: False
+rw_partition_scheme: default
+coord_min: 0
+coord_max: 1023
+num_points: 150000
+
+# Options about octree partitioning
+octree_cfg:
+    bbox_min: [0, 0, 0]
+    bbox_max: [1023, 1023, 1023]
+    point_min: 256 # marked as skip if points in a block less than this number
+    point_max: 4096 # keep splitting if points in a block larger than this number
+    level_min: 1
+    level_max: 6
+
+# Options under individual configurations
+train_cfg:
+    batch_size: 4
+    shuffle: True
+    num_workers: 4
+    augmentation: True
+    split: train
+val_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 4
+    augmentation: True
+    split: test
+test_cfg:
+    batch_size: 4
+    shuffle: False
+    num_workers: 4
+    augmentation: False
+    split: test

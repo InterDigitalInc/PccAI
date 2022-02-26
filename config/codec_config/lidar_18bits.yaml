@@ -1,0 +1,24 @@
+# Copyright (c) 2010-2022, InterDigital
+# All rights reserved. 
+
+# See LICENSE under the root folder.
+
+
+# Configure the encoder/decoder for actual compression/decompression
+
+# Codec class
+codec: 'octree_partition'
+
+# Native translation and scaling of the data
+translate: [131072, 131072, 131072]
+scale: 1
+max_num_points: 1500000 # maximum number of points that can be handled
+
+# Options about octree partitioning
+octree_cfg:
+    bbox_min: [0, 0, 0]
+    bbox_max: [262143, 262143, 262143]
+    point_min: 64
+    point_max: 2025 # keep splitting if points in a block larger than this number
+    level_min: 3
+    level_max: 10
