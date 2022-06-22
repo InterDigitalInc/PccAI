@@ -23,8 +23,8 @@ class PointNet(nn.Module):
 
     def __init__(self, net_config, **kwargs):
         super(PointNet, self).__init__()
-        self.pointwise_mlp = PointwiseMLP(net_config['mlp_dims'], net_config['mlp_dolastrelu']) # learnable
-        self.fc = PointwiseMLP(net_config['fc_dims'], False) # learnable
+        self.pointwise_mlp = PointwiseMLP(net_config['mlp_dims'], net_config.get('mlp_dolastrelu', False)) # learnable
+        self.fc = PointwiseMLP(net_config['fc_dims'], net_config.get('fc_dolastrelu', False)) # learnable
 
         # self.pointnet = PointNet(net_config['mlp_dims'], net_config['fc_dims'], net_config['mlp_dolastrelu'])
         self.global_pool = GlobalPool(nn.AdaptiveMaxPool2d((1, net_config['mlp_dims'][-1])))
@@ -38,7 +38,7 @@ class PointNetHetero(nn.Module):
 
     def __init__(self, net_config, **kwargs):
         super(PointNetHetero, self).__init__()
-        self.pointwise_mlp = PointwiseMLP(net_config['mlp_dims'], net_config['mlp_dolastrelu']) # learnable
+        self.pointwise_mlp = PointwiseMLP(net_config['mlp_dims'], net_config.get('mlp_dolastrelu', False)) # learnable
         self.fc = PointwiseMLP(net_config['fc_dims'], False) # learnable
         self.ext_cw = net_config.get('ext_cw', False)
 

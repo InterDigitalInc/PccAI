@@ -16,7 +16,7 @@ import numpy as np
 from pccai.models import PccModelWithLoss
 from pccai.dataloaders.point_cloud_dataset import point_cloud_dataloader
 from pccai.utils.syntax import SyntaxGenerator
-from pccai.utils.pc_write import pc_write_o3d
+from pccai.utils.misc import pc_write_o3d, load_state_dict_with_fallback
 import pccai.utils.logger as logger
 
 
@@ -141,7 +141,7 @@ def test_pccnet(opt):
     for _ in range(len(state_dict)):
         k, v = state_dict.popitem(False)
         state_dict[k[len('.pcc_model'):]] = v
-    pccnet.pcc_model.load_state_dict(state_dict)
+    load_state_dict_with_fallback(pccnet.pcc_model, state_dict)
     logger.log.info("Model weights loaded from check point %s.\n" % opt.checkpoint)
     device = torch.device("cuda:0")
     pccnet.to(device)

@@ -20,7 +20,7 @@ elif [[ ${LAUNCHER} == "f" ]]; then
 elif [[ ${LAUNCHER} == "s" ]]; then
     echo "Launch the job with slurm."
     source './scripts/tmp/'${TMP_ARGS}
-    # Please modify according your needs 
+    # Please modify according your needs
     sbatch --job-name=${EXP_NAME} -n 1 -D ${HOME_DIR} --gres=gpu:1 ./scripts/config_args.sh ${TMP_ARGS} 0
 else
     echo "No launcher is specified."

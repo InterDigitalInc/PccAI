@@ -7,12 +7,11 @@
 PY_NAME="${HOME_DIR}/experiments/train.py"
 
 # Main configurations
-HETERO="False"
+HETERO="True"
 NET_CONFIG="${HOME_DIR}/config/net_config/mlp_compression.yaml"
 OPTIM_CONFIG="${HOME_DIR}/config/optim_config/optim_cd_canonical.yaml"
-TRAIN_DATA_CONFIG="${HOME_DIR}/config/data_config/ford_simple.yaml train_cfg"
-VAL_DATA_CONFIG="${HOME_DIR}/config/data_config/ford_simple.yaml val_cfg"
-DDP=False
+TRAIN_DATA_CONFIG="${HOME_DIR}/config/data_config/ford_octree.yaml train_cfg"
+VAL_DATA_CONFIG="${HOME_DIR}/config/data_config/ford_octree.yaml val_cfg"
 
 # Logging settings
 PRINT_FREQ="20"
@@ -23,4 +22,3 @@ SAVE_CHECKPOINT_MAX="10"
 VAL_FREQ="5"
 VAL_PRINT_FREQ="20"
 LOG_FILE=$(date); LOG_FILE=log_${LOG_FILE//' '/$'_'}.txt
-LOG_FILE_ONLY="False"

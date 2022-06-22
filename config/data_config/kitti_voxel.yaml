@@ -8,8 +8,12 @@
 
 # Common options of the dataset
 dataset: kitti_simple
-num_points: 80000 # for point clouds in folder 0 - 10, at least have 82602 points, at most have 129392 points
+num_points: 130000 # for point clouds in folder 0 - 10, at least have 82602 points, at most have 129392 points
 seed: 0
+quantize_resolution: 4095
+voxelize: True
+sparse_collate: True
+return_intensity: False
 
 # Options on the splitting scheme
 splitting:
@@ -20,29 +24,28 @@ splitting:
         - 3
         - 4
         - 5
-    val:
         - 6
         - 7
     test:
-        - 11
-        - 12
-        - 13
+        - 8
+        - 9
+        - 10
 
 # Options under individual configurations
 train_cfg:
-    batch_size: 8
+    batch_size: 4
     shuffle: True
     num_workers: 4
     augmentation: True
     split: train
 val_cfg:
-    batch_size: 4
+    batch_size: 1
     shuffle: False
     num_workers: 2
     augmentation: False
     split: val
 test_cfg:
-    batch_size: 4
+    batch_size: 1
     shuffle: False
     num_workers: 2
     augmentation: False

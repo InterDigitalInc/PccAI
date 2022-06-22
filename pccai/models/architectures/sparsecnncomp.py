@@ -4,13 +4,24 @@
 # See LICENSE under the root folder.
 
 
-import torch
-from pccai.models.modules.get_modules import get_module_class
-from compressai.models.priors import CompressionModel
-import MinkowskiEngine as ME
+# Make an attempt to load MinkowskiEngine
+try:
+    import MinkowskiEngine as ME
+    found_ME = True
+except ModuleNotFoundError:
+    found_ME = False
 
-class SparseCnnCompression(CompressionModel):
-    """A simple compression architecture using sparse convolutions. Just a template for reference."""
+import torch
+import torch.nn as nn
+from pccai.models.modules.get_modules import get_module_class
+
+
+class SparseCnnCompression():
+    """
+    This example shows how pccAI works with MinkowskiEngine and the sparse_collate() function in
+    point cloud_dataset.py to operate on sparse 3D tensors A simple compression architecture using 
+    sparse convolutions. This is just an incomplete template for reference.
+    """
 
     def __init__(self, net_config, syntax):
         super().__init__(net_config['entropy_bottleneck'], False)
@@ -25,10 +36,13 @@ class SparseCnnCompression(CompressionModel):
         coords[0][0] = 0
         coords[:, 0] = torch.cumsum(coords[:,0], 0)
         device = coords.device
-        x = ME.SparseTensor(
-            features=torch.ones(coords.shape[0], 1, device=device, dtype=torch.float32),
-            coordinates=coords, 
-            device=device)
+
+        # An example to build a sparse tensor x with the MinkowskiEngine
+        if found_ME:
+            x = ME.SparseTensor(
+                features=torch.ones(coords.shape[0], 1, device=device, dtype=torch.float32),
+                coordinates=coords, 
+                device=device)
 
         # TODO: Perform processing to the sparse tensor x
 

@@ -24,10 +24,11 @@ octree_cfg:
 splitting:
     train:
         - 1
-        - 2
     val:
+        - 2
         - 3
     test:
+        - 2
         - 3
 
 # Options under individual configurations

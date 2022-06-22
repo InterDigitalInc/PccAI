@@ -4,7 +4,8 @@
 # See LICENSE under the root folder.
 
 
-# Training functions
+# Training functions.
+# The aux optimizer is for the compatibility of CompressAI (if it is used)
 
 import shutil
 import time
@@ -24,6 +25,7 @@ from pccai.models import PccModelWithLoss
 from pccai.optim.utils import configure_optimization
 from pccai.utils.syntax import SyntaxGenerator
 from pccai.dataloaders.point_cloud_dataset import point_cloud_dataloader
+from pccai.utils.misc import load_state_dict_with_fallback
 import pccai.utils.logger as logger
 
 
@@ -69,17 +71,6 @@ def load_checkpoint(checkpoint_path, with_optim, with_epoch_state, pccnet, epoch
         if aux_scheduler is not None:
             aux_scheduler.load_state_dict(checkpoint['aux_scheduler_state_dict'])
         logger.log.info("Optimization parameters loaded.\n")
-
-
-def load_state_dict_with_fallback(obj, dict):
-    """Load a checkpoint with fall back."""
-
-    try:
-        obj.load_state_dict(dict)
-    except RuntimeError as e:
-        logger.log.exception(e)
-        logger.log.info(f'Strict load_state_dict has failed. Attempting in non strict mode.')
-        obj.load_state_dict(dict, strict=False)
 
 
 def train_one_epoch(pccnet, dataloader, optimizer, aux_optimizer, writer, batch_total, opt):

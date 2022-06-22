@@ -18,7 +18,7 @@ from pccai.codecs.pcc_codec import PccCodecBase
 class OctreePartitionCodec(PccCodecBase):
     """An example PCC Codec based on octree partitioning and blockwise processing."""
 
-    def __init__(self, codec_config, pccnet, syntax):
+    def __init__(self, codec_config, pccnet, bit_depth, syntax):
         super().__init__(codec_config, pccnet, syntax)
         self.pc_organizer = OctreeOrganizer(
             codec_config['octree_cfg'],
@@ -47,7 +47,7 @@ class OctreePartitionCodec(PccCodecBase):
         
         # Return other statistics through this dictionary
         stat_dict = {
-            'enc_time': str(round(end - start, 3)) + 's',
+            'enc_time': round(end - start, 3),
         }
 
         return [file_name], stat_dict
@@ -69,7 +69,7 @@ class OctreePartitionCodec(PccCodecBase):
 
         # Return other statistics through this dictionary
         stat_dict = {
-            'dec_time': str(round(end - start, 3)) + 's',
+            'dec_time': round(end - start, 3),
         }
     
         return pc_rec, stat_dict

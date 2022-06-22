@@ -7,12 +7,11 @@
 PY_NAME="${HOME_DIR}/experiments/test.py"
 
 # Main configurations
-HETERO="True"
 OPTIM_CONFIG="${HOME_DIR}/config/optim_config/optim_cd_canonical.yaml"
-TEST_DATA_CONFIG="${HOME_DIR}/config/data_config/ford_octree.yaml test_cfg"
-CHECKPOINT="${HOME_DIR}/results/train_ford_hetero/epoch_newest.pth"
+TEST_DATA_CONFIG="${HOME_DIR}/config/data_config/modelnet_simple.yaml test_cfg"
+CHECKPOINT="${HOME_DIR}/results/train_mdlnet/epoch_newest.pth"
 CHECKPOINT_NET_CONFIG="True"
-GEN_BITSTREAM="True"
+GEN_BITSTREAM="False" # generate actual bit-stream if True, needs CompressAI
 
 # Logging settings
 PRINT_FREQ="10"

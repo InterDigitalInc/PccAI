@@ -8,7 +8,7 @@ import subprocess
 import os
 import random
 
-from pccai.utils.pc_write import pc_write_o3d
+from pccai.utils.misc import pc_write_o3d
 base_path = os.path.split(__file__)[0]
 
 def compute_metrics(gt_file, pc_rec, res, normal=False):
@@ -16,7 +16,7 @@ def compute_metrics(gt_file, pc_rec, res, normal=False):
 
     tmp_file_name = os.path.join('./tmp/', 'metric_'+str(hex(int(random.random() * 1e15)))+'.ply')
     rec_file = os.path.join(base_path, '../..', tmp_file_name)
-    pc_error_path = os.path.join(base_path, '../..', 'third_party/pc_error_d')
+    pc_error_path = os.path.join(base_path, '../..', 'third_party/pc_error')
     pc_write_o3d(pc_rec, rec_file)
     cmd = pc_error_path + ' -a '+ gt_file + ' -b '+ rec_file + ' --hausdorff=1 '+ ' --resolution=' + str(res)
     if normal: cmd = cmd + ' -n ' + gt_file

@@ -11,6 +11,9 @@ import numpy as np
 from torch.utils import data
 import open3d as o3d
 
+import sys
+found_quantize = False
+
 
 def absoluteFilePaths(directory):
    for dirpath, _, file_names in os.walk(directory):
@@ -107,11 +110,12 @@ class KITTIBase(data.Dataset):
     def __init__(self, data_config, sele_config, **kwargs):
 
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        dataset_path = os.path.abspath(os.path.join(base_dir, '../../datasets/kitti/dataset/sequences/')) # the default dataset path
+        dataset_path = os.path.abspath(os.path.join(base_dir, '../../datasets/kitti/')) # the default dataset path
         
         # Other specific options
         self.translate = data_config.get('translate', [0, 0, 0])
         self.scale = data_config.get('scale', 1)
+        self.quantize_resolution = data_config.get('quantize_resolution', None) if found_quantize else None
         self.split = data_config[sele_config]['split']
         splitting = data_config['splitting'][self.split]
         
@@ -128,7 +132,10 @@ class KITTIBase(data.Dataset):
 
     def __getitem__(self, index):
         raw_data = np.fromfile(self.im_idx[index], dtype=np.float32).reshape((-1, 4))
-        pc = (raw_data[:, :3] + np.array(self.translate)) * self.scale
+        if self.quantize_resolution is not None:
+            pc = quantize_resolution(raw_data[:, :3], self.quantize_resolution)
+        else:
+            pc = (raw_data[:, :3] + np.array(self.translate)) * self.scale
         return {'pc': pc}
 
 

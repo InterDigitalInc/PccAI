@@ -14,7 +14,6 @@ modules:
         model: pointnet
         mlp_dims: [3, 64, 64, 64, 128, 1024]
         fc_dims: [1024, 512, 64]
-        mlp_dolastrelu: False
     pc_gen:
         model: mlpdecoder
         dims: [64, 128, 256, 512, 1024]

@@ -9,11 +9,13 @@
 import os
 import os.path
 import numpy as np
+import pickle
 
 import torch.utils.data as data
 from torch_geometric.transforms.sample_points import SamplePoints
 from  torch_geometric.datasets.modelnet import ModelNet
 from pccai.utils.convert_octree import OctreeOrganizer
+import pccai.utils.logger as logger
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 dataset_path_default=os.path.abspath(os.path.join(BASE_DIR, '../../datasets/modelnet/')) # the default dataset path
@@ -50,7 +52,7 @@ class ModelNetBase(data.Dataset):
 
 
     def pc_preprocess(self, pc):
-        """Perform different types of prep-rocessings to the ModelNet point clouds."""
+        """Perform different types of pre-processings to the ModelNet point clouds."""
     
         if self.centralize:
             centroid = np.mean(pc, axis=0)
@@ -68,7 +70,7 @@ class ModelNetBase(data.Dataset):
                 # This is to facilitate the sparse tensor construction with Minkowski Engine
                 if self.sparse_collate:
                     pc = np.hstack((np.zeros((pc.shape[0], 1), dtype='int32'), pc))
-                    pc = np.vstack((pc, np.ones((self.num_points - pc.shape[0], 4), dtype='int32') * -1))
+                    # pc = np.vstack((pc, np.ones((self.num_points - pc.shape[0], 4), dtype='int32') * -1))
                     pc[0][0] = 1
                 return pc
         else: # if do not specify minmax, normalize the point cloud within a unit ball
@@ -83,10 +85,31 @@ class ModelNetSimple(ModelNetBase):
     def __init__(self, data_config, sele_config, **kwargs):
         super().__init__(data_config, sele_config)
 
+        # Use_cache specifies the pickle file to be read/written down, "" means no caching mechanism is used
+        self.use_cache = data_config.get('use_cache', '')
+
+        # By using the cache file, the data is no longer generated on the fly but the loading becomes much faster
+        if self.use_cache != '':
+            cache_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../datasets/', self.use_cache)
+            if os.path.exists(cache_file): # the cache file already exist
+                logger.log.info("Loading pre-processed ModelNet40 cache file...")
+                with open(cache_file, 'rb') as f:
+                    self.cache = pickle.load(f)
+            else: # the cache file is not there yet
+                self.cache = []
+                logger.log.info("Sampling point clouds from raw ModelNet40 data...")
+                for i in range(len(self.point_cloud_dataset)):
+                    # Be careful that here the data type is converted as uint8 to save space
+                    self.cache.append(self.pc_preprocess(self.point_cloud_dataset[i].pos.numpy()).astype(np.uint8))
+                with open(cache_file, 'wb') as f:
+                    pickle.dump(self.cache, f)
+            logger.log.info("ModelNet40 data loaded...\n")
+
     def __getitem__(self, index):
-        pc = self.point_cloud_dataset[index].pos.numpy()
-        pc = self.pc_preprocess(pc)
-        return pc
+        if self.use_cache:
+            return self.cache[index].astype(np.int32) # data type convert back to int32
+        else:
+            return self.pc_preprocess(self.point_cloud_dataset[index].pos.numpy())
 
 
 class ModelNetOctree(ModelNetBase):

@@ -32,3 +32,14 @@ def pt_to_np(tensor):
     """Convert PyTorch tensor to NumPy array."""
 
     return tensor.contiguous().cpu().detach().numpy()
+
+
+def load_state_dict_with_fallback(obj, dict):
+    """Load a checkpoint with fall back."""
+
+    try:
+        obj.load_state_dict(dict)
+    except RuntimeError as e:
+        logger.log.exception(e)
+        logger.log.info(f'Strict load_state_dict has failed. Attempting in non strict mode.')
+        obj.load_state_dict(dict, strict=False)

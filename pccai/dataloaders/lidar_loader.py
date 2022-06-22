@@ -49,7 +49,7 @@ class LidarSimple(data.Dataset):
             # This is to facilitate the sparse tensor construction with Minkowski Engine
             if self.sparse_collate:
                 pc = np.hstack((np.zeros((pc.shape[0], 1), dtype='int32'), pc))
-                pc = np.vstack((pc, np.ones((self.num_points - pc.shape[0], 4), dtype='int32') * -1))
+                # pc = np.vstack((pc, np.ones((self.num_points - pc.shape[0], 4), dtype='int32') * -1))
                 pc[0][0] = 1
             return pc
         else:
