@@ -18,7 +18,7 @@ from pccai.models.modules.get_modules import get_module_class
 
 class SparseCnnCompression():
     """
-    This example shows how pccAI works with MinkowskiEngine and the sparse_collate() function in
+    This example shows how PccAI works with MinkowskiEngine and the sparse_collate() function in
     point cloud_dataset.py to operate on sparse 3D tensors A simple compression architecture using 
     sparse convolutions. This is just an incomplete template for reference.
     """

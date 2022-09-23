@@ -4,7 +4,7 @@
 # See LICENSE under the root folder.
 
 
-# Benchmarking PCC models, this version is dedicated for lossy compression
+# Benchmarking PCC models
 
 import time
 import os
@@ -12,15 +12,33 @@ import numpy as np
 import yaml
 import torch
 import glob
-import open3d as o3d
 
-# Load different utilities from pccAI
+# Load different utilities from PccAI
 from pccai.utils.syntax import SyntaxGenerator
 from pccai.utils.pc_metric import compute_metrics
-from pccai.utils.misc import pc_write_o3d, load_state_dict_with_fallback
+from pccai.utils.misc import pc_read, pc_write, load_state_dict_with_fallback
 from pccai.codecs.utils import get_codec_class
 from pccai.models.pcc_models import get_architecture_class
 import pccai.utils.logger as logger
+
+
+def create_pccnet(net_config, checkpoint, syntax, device):
+    """Build the network model."""
+
+    # Construct the PCC model
+    architecture_class = get_architecture_class(net_config['architecture'])
+    pccnet = architecture_class(net_config['modules'], syntax)
+
+    # Load the network weights
+    state_dict = checkpoint['net_state_dict'].copy()
+    for _ in range(len(state_dict)):
+        k, v = state_dict.popitem(False)
+        state_dict[k[len('.pcc_model'):]] = v
+    load_state_dict_with_fallback(pccnet, state_dict)
+    pccnet.to(device)
+    pccnet.eval()
+    logger.log.info("Model weights loaded.")
+    return pccnet
 
 
 def benchmark_checkpoints(opt):
@@ -40,6 +58,7 @@ def benchmark_checkpoints(opt):
             pc_file_list.append(item)
         else:
             pc_file_list += list(glob.iglob(item + '/**/*.ply', recursive=True))
+            pc_file_list.sort()
 
     for filename_ckpt in opt.checkpoints:
 
@@ -51,20 +70,7 @@ def benchmark_checkpoints(opt):
             logger.log.info("Model config loaded from check point.")
             logger.log.info(opt.net_config)
         syntax = SyntaxGenerator(opt=opt)
-
-        # Construct the PCC model
-        architecture_class = get_architecture_class(opt.net_config['architecture'])
-        pccnet = architecture_class(opt.net_config['modules'], syntax)
-
-        # Load the network weights
-        state_dict = checkpoint['net_state_dict']
-        for _ in range(len(state_dict)):
-            k, v = state_dict.popitem(False)
-            state_dict[k[len('.pcc_model'):]] = v
-        load_state_dict_with_fallback(pccnet, state_dict)
-        pccnet.to(device)
-        pccnet.eval()
-        logger.log.info("Model weights loaded.")
+        pccnet = create_pccnet(opt.net_config, checkpoint, syntax, device)
         
         # Start the benchmarking
         t = time.monotonic()
@@ -74,7 +80,7 @@ def benchmark_checkpoints(opt):
             codec = get_codec_class(opt.codec_config['codec'])(opt.codec_config, pccnet, bit_depth, syntax) # initialize the codec
 
             # Load the point cloud and initialize the log_dict
-            pc_raw = np.asarray(o3d.io.read_point_cloud(pc_file).points)
+            pc_raw = pc_read(pc_file)
             log_dict = {
                 'pc_name': os.path.split(pc_file)[1],
                 'num_points': pc_raw.shape[0],
@@ -87,17 +93,24 @@ def benchmark_checkpoints(opt):
                 compressed_files, stat_dict_enc = codec.compress(pc_raw, tag=os.path.join(tmp_folder, os.path.splitext(log_dict['pc_name'])[0] + '_' + opt.exp_name))
 
                 # Decode compressed_files with pccnet, obtain pc_rec
-                pc_rec, stat_dict_dec = codec.decompress(compressed_files)
+                if opt.skip_decode == False:
+                    pc_rec, stat_dict_dec = codec.decompress(compressed_files)
 
             # Update the log_dict and compute D1, D2
             log_dict['bit_total'] = np.sum([os.stat(f).st_size for f in compressed_files]) * 8
             log_dict['bpp'] = log_dict['bit_total'] / log_dict['num_points']
-            log_dict['rec_num_points'] = pc_rec.shape[0]
 
             peak_value = opt.peak_value[0 if len(opt.peak_value) == 1 else idx] # support point clouds with different bit-depths, individual peak values need to be provided in this case
-            log_dict.update(compute_metrics(pc_file, pc_rec, peak_value, opt.compute_d2))
+            if opt.skip_decode:
+                log_dict['d1_psnr'] = -1
+                log_dict['d2_psnr'] = -1
+                log_dict['rec_num_points'] = -1
+            else:
+                log_dict.update(compute_metrics(pc_file, pc_rec, peak_value, opt.compute_d2))
+                log_dict['rec_num_points'] = pc_rec.shape[0]
             log_dict.update(stat_dict_enc)
-            log_dict.update(stat_dict_dec)
+            if opt.skip_decode == False:
+                log_dict.update(stat_dict_dec)
             log_dict_ckpt.append(log_dict)
             if opt.remove_compressed_files:
                 for f in compressed_files: os.remove(f)
@@ -110,9 +123,9 @@ def benchmark_checkpoints(opt):
                 logger.log.info(message[:-2])
 
             # Write down the point cloud if needed
-            if opt.pc_write_freq > 0 and idx % opt.pc_write_freq == 0:
+            if opt.pc_write_freq > 0 and idx % opt.pc_write_freq == 0 and opt.skip_decode == False:
                 filename_rec = os.path.join(opt.exp_folder, opt.write_prefix + os.path.splitext(log_dict['pc_name'])[0] + "_rec.ply")
-                pc_write_o3d(pc_rec, filename_rec)
+                pc_write(pc_rec, filename_rec)
 
         elapse = time.monotonic() - t
         log_dict_all[filename_ckpt] = log_dict_ckpt

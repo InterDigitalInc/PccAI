@@ -9,9 +9,8 @@
 import os
 import numpy as np
 from torch.utils import data
-import open3d as o3d
+from pccai.utils.misc import pc_read
 
-import sys
 found_quantize = False
 
 
@@ -54,8 +53,8 @@ class FordBase(data.Dataset):
 
 
     def __getitem__(self, index):
-        raw_data = o3d.io.read_point_cloud(self.im_idx[index]) # loading reflectance is not supported yet
-        pc = (np.asarray(raw_data.points) + np.array(self.translate)) * self.scale
+        
+        pc = (pc_read(self.im_idx[index]) + np.array(self.translate)) * self.scale
         if self.point_max > 0 and pc.shape[0] > self.point_max:
                 pc = pc[:self.point_max, :]
         return {'pc': pc, 'ref': None}
@@ -95,8 +94,7 @@ class QnxadasBase(data.Dataset):
 
 
     def __getitem__(self, index):
-        raw_data = o3d.io.read_point_cloud(self.im_idx[2 * index + 1]) # loading reflectance is not supported yet
-        pc = (np.asarray(raw_data.points) + np.array(self.translate)) * self.scale
+        pc = (pc_read(self.im_idx[2 * index + 1]) + np.array(self.translate)) * self.scale
         return {'pc': pc, 'ref': None}
 
 

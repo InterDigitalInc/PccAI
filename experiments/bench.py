@@ -16,7 +16,7 @@ import sys
 import csv
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
 
-# Load different utilities from pccAI
+# Load different utilities from PccAI
 from pccai.utils.option_handler import BenchmarkOptionHandler
 import pccai.utils.logger as logger
 from pccai.pipelines.bench import *

@@ -20,7 +20,7 @@ from collections import deque
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
-# Load different utilities from pccAI
+# Load different utilities from PccAI
 from pccai.models import PccModelWithLoss
 from pccai.optim.utils import configure_optimization
 from pccai.utils.syntax import SyntaxGenerator
@@ -31,7 +31,11 @@ import pccai.utils.logger as logger
 
 def save_checkpoint(pccnet, optimizer, scheduler, epoch_state, aux_optimizer, aux_scheduler, opt, checkpoint_name):
     if opt.ddp and dist.get_rank() != 0: return # in DDP mode, only save checkpoint when rank is 0
-    data = {}
+    data = {
+        'net_state_dict': pccnet.module.state_dict(),
+        'net_config': opt.net_config,
+        'epoch_state': epoch_state,
+    }
     if optimizer is not None:
         data['optimizer_state_dict'] = optimizer.state_dict()
     if scheduler is not None:
@@ -42,11 +46,6 @@ def save_checkpoint(pccnet, optimizer, scheduler, epoch_state, aux_optimizer, au
         data['aux_scheduler_state_dict'] = aux_scheduler.state_dict()
     if (aux_optimizer is not None) or (aux_scheduler is not None):
         pccnet.module.pcc_model.update()
-    data = {
-        'net_state_dict': pccnet.module.state_dict(),
-        'net_config': opt.net_config,
-        'epoch_state': epoch_state,
-    }
     torch.save(data, checkpoint_name)
 
 
@@ -217,6 +216,8 @@ def train_pccnet(opt):
     # Start the training process
     batch_total = 0
     checkpoint_queue = deque()
+    mdl_cnt = sum(p.numel() for p in pccnet.parameters() if p.requires_grad)
+    logger.log.info('Model parameter count %d.' % mdl_cnt)
 
     t = time.monotonic()
     epoch = epoch_state['last_epoch']

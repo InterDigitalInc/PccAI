@@ -1,5 +1,6 @@
 tags
 builds
+*.csv
 *.inc
 *.bin
 *.pth

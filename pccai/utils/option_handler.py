@@ -123,6 +123,7 @@ class BenchmarkOptionHandler(BasicOptionHandler):
         parser.add_argument('--peak_value', type=int, nargs='+', required=True, help='Peak value(s) for computing the D1 and D2 metrics. If only one value is provided, it will be used for the whole test; otherwise peak values for every point clouds need to be given.')
         parser.add_argument('--bit_depth', type=int, nargs='+', required=True, help='Bit-depth value(s) of the point cloud(s) to be tested. If only one value is provided, it will be used for the whole test; otherwise bit-depths for every point clouds need to be given.')
         parser.add_argument('--remove_compressed_files', type=str2bool, nargs='?', const=True, default=True, help='Whether to remove the compressed files.')
+        parser.add_argument('--skip_decode', type=str2bool, nargs='?', const=True, default=False, help='Whether to skip the decoding process, useful for lossless compression.')
         parser.add_argument('--compute_d2', type=str2bool, nargs='?', const=True, default=False, help='Whether to compute the D2 metric.')
         parser.add_argument('--mpeg_report', type=str, default=None, help='Write the results for MPEG reporting in the CSV format.')
         parser.add_argument('--mpeg_report_sequence', type=str2bool, nargs='?', const=True, default=False, help='If true, create MPEG report in the CSV format by viewing the inputs as point cloud sequences.')

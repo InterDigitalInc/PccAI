@@ -12,11 +12,11 @@ import yaml
 import torch
 import numpy as np
 
-# Load different utilities from pccAI
+# Load different utilities from PccAI
 from pccai.models import PccModelWithLoss
 from pccai.dataloaders.point_cloud_dataset import point_cloud_dataloader
 from pccai.utils.syntax import SyntaxGenerator
-from pccai.utils.misc import pc_write_o3d, load_state_dict_with_fallback
+from pccai.utils.misc import pc_write, load_state_dict_with_fallback
 import pccai.utils.logger as logger
 
 
@@ -55,24 +55,6 @@ def test_one_epoch(pccnet, dataset, dataloader, syntax, gen_bitstream, print_fre
             for k, v in loss.items(): message += '%s: %f, ' % (k, v)
             logger.log.info(message[:-2])
 
-        # Write down the point cloud if needed
-        if pc_write_freq > 0 and batch_id % pc_write_freq == 0:
-            filename_gt = os.path.join(exp_folder, pc_write_prefix + str(batch_id) + "_gt.ply")
-            filename_rec = os.path.join(exp_folder, pc_write_prefix + str(batch_id) + "_rec.ply")
-            if syntax.hetero:
-                pc_gt = points[0][points[0][:, syntax_gt['block_pntcnt']] > 0, syntax_gt['xyz'][0] : syntax_gt['xyz'][1] + 1] # take the first point cloud, only keep the blocks with "transform" mode
-                pc_rec = output['x_hat'][torch.cumsum(output['x_hat'][:, syntax_rec['pc_start']], dim=0) == 1, 
-                    syntax_rec['xyz'][0] : syntax_rec['xyz'][1] + 1]
-                pc_write_o3d(pc_gt, filename_gt)
-                pc_write_o3d(pc_rec, filename_rec)
-            else:
-                coloring = np.ones((output['x_hat'][0].shape[0], 3)) * 0.5 # set the colors as 0.5
-                normals = output.get('dxyz_dw_n', None)
-                if normals is not None:
-                    normals = normals[0].contiguous().data.cpu().detach().numpy()
-                pc_write_o3d(points[0], filename_gt)
-                pc_write_o3d(output['x_hat'][0], filename_rec, coloring, normals=normals)
-
         # Perform REAL compression, this part is useful under the heterogeneous mode
         if gen_bitstream:
             # Compress then decompress
@@ -108,9 +90,9 @@ def test_one_epoch(pccnet, dataset, dataloader, syntax, gen_bitstream, print_fre
                 if syntax.hetero:
                     pc_rec_real = rec_real[torch.cumsum(rec_real[:, syntax_rec['pc_start']], dim=0) == 1, 
                         syntax_rec['xyz'][0] : syntax_rec['xyz'][1] + 1]
-                    pc_write_o3d(pc_rec_real, filename_rec_real)
+                    pc_write(pc_rec_real, filename_rec_real)
                 else:
-                    pc_write_o3d(rec_real[0], filename_rec_real)
+                    pc_write(rec_real[0], filename_rec_real)
 
     # Log the results
     for k in avg_loss.keys(): avg_loss[k] = avg_loss[k] / (batch_id + 1) # the average loss

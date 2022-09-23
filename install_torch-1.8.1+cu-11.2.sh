@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # PccAI installation example
-# Run "echo y | conda create -n pccai python=3.6 && conda activate pccai && ./install_torch-1.7.0+cu-10.1.sh"
+# Run "echo y | conda create -n pccai python=3.8 && conda activate pccai && ./install_torch-1.8.1+cu-11.2.sh"
 
 # 1. Basic installation for PccAI
-echo y | conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 cudatoolkit=10.1 -c pytorch
-pip install tensorboard==2.9.0
+pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+pip install tensorboard==2.8.0
 pip install plyfile==0.7.4
-pip install --no-index torch-scatter==2.0.7 -f https://pytorch-geometric.com/whl/torch-1.7.0+cu101.html
-pip install --no-index torch-sparse==0.6.9 -f https://pytorch-geometric.com/whl/torch-1.7.0+cu101.html
+pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.1+cu111.html
+pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.1+cu111.html
 pip install torch-geometric==2.0.3
 
 # 2. Additional installation for the examples
@@ -23,4 +23,4 @@ cd ../..
 pip install compressai==1.1.1
 
 # Optional: Open3D for visualization
-pip install open3d==0.15.2
+pip install open3d==0.14.1

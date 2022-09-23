@@ -15,7 +15,7 @@ import torch
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
 
-# Load different utilities from pccAI
+# Load different utilities from PccAI
 from pccai.utils.option_handler import TestOptionHandler
 import pccai.utils.logger as logger
 from pccai.pipelines.test import *

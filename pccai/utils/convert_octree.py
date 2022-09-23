@@ -9,10 +9,10 @@
 import os
 import pickle
 import numpy as np
-from numba import njit
+# from numba import njit
 
 
-@njit
+# @njit
 def compute_new_bbox(idx, bbox_min, bbox_max):
     """Compute global block bounding box given an index."""
 
@@ -32,7 +32,7 @@ def compute_new_bbox(idx, bbox_min, bbox_max):
     return cur_bbox_min, cur_bbox_max
 
 
-@njit
+# @njit
 def _analyze_octant(points, bbox_min, bbox_max):
     """Analyze the statistics of the points in a given block."""
 
