@@ -5,6 +5,9 @@ PccAI (*pick-kai*) is a PyTorch-based framework for conducting AI-based Point Cl
 * Benchmarking AI-based PCC approaches according to MPEG recommendation.
 * Visualization of point clouds.
 
+## News
+ * [Dec 2024] MPEG has adopted the PccAI framework as the testbed for establishing the international standard on AI-based point cloud compression. More details are available [here](https://git.mpeg.expert/MPEG/3dgh/ai-gc/software/mpeg-pcc-tmap) (MPEG account required).
+
 ## Features
 
  * *Modularized design*: PccAI adopts a modularized design for training/inference, which makes it a highly flexible framework to verify AI-based PCC approaches.
